@@ -2,11 +2,26 @@ cmake_minimum_required(VERSION 3.30)
 
 project(xbox-swizzle VERSION 1.0.0 LANGUAGES C)
 
+set(_HEADERS src/xbox-swizzle/swizzle.h)
+
 # Texture swizzling routines.
 add_library(
         ${PROJECT_NAME}
         src/xbox-swizzle/swizzle.c
-        src/xbox-swizzle/swizzle.h
+        ${_HEADERS}
+)
+
+target_include_directories(
+        ${PROJECT_NAME}
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
+
+set_property(
+        TARGET
+        ${PROJECT_NAME}
+        PROPERTY
+        PUBLIC_HEADER ${_HEADERS}
 )
 
 include(GNUInstallDirs)
@@ -18,7 +33,7 @@ install(
         EXPORT XboxSwizzleTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xbox-swizzle
 )
 
 write_basic_package_version_file(
@@ -28,7 +43,7 @@ write_basic_package_version_file(
 )
 
 configure_package_config_file(
-        "cmake/XboxSwizzleConfig.cmake.in" # You will need to create this file
+        "cmake/XboxSwizzleConfig.cmake.in"
         "${CMAKE_CURRENT_BINARY_DIR}/XboxSwizzleConfig.cmake"
         INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
